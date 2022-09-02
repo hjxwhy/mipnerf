@@ -1,0 +1,10 @@
+Config.dataset_loader = 'multicam'
+Config.white_bkgd = False
+Config.randomized = True
+Config.factor = 4
+Config.batch_size = 2048
+Config.lr_init = 2e-3
+Config.lr_final = 2e-5
+Config.max_steps = 300000
+MipNerfModel.use_viewdirs = True
+MipNerfModel.density_noise = 1.

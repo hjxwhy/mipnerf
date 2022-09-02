@@ -29,9 +29,9 @@ from PIL import Image
 gin.add_config_file_search_path('../')
 
 
-gin.config.external_configurable(flax.nn.relu, module='flax.nn')
-gin.config.external_configurable(flax.nn.sigmoid, module='flax.nn')
-gin.config.external_configurable(flax.nn.softplus, module='flax.nn')
+gin.config.external_configurable(jax.nn.relu, module='jax.nn')
+gin.config.external_configurable(jax.nn.sigmoid, module='jax.nn')
+gin.config.external_configurable(jax.nn.softplus, module='jax.nn')
 
 
 @flax.struct.dataclass
@@ -97,7 +97,7 @@ def define_common_flags():
   flags.DEFINE_string('train_dir', None, 'where to store ckpts and logs')
   flags.DEFINE_string('data_dir', None, 'input data directory.')
   flags.DEFINE_integer(
-      'chunk', 8192,
+      'chunk', 1024,
       'the size of chunks for evaluation inferences, set to the value that'
       'fits your GPU/TPU memory.')
 

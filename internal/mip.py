@@ -251,7 +251,9 @@ def sample_along_rays(key, origins, directions, radii, num_samples, near, far,
   if lindisp:
     t_vals = 1. / (1. / near * (1. - t_vals) + 1. / far * t_vals)
   else:
-    t_vals = near * (1. - t_vals) + far * t_vals
+    t_vals = jnp.log(near) * (1 - t_vals) + jnp.log(far) * t_vals
+    t_vals = jnp.exp(t_vals)
+    # t_vals = near * (1. - t_vals) + far * t_vals
 
   if randomized:
     mids = 0.5 * (t_vals[..., 1:] + t_vals[..., :-1])

@@ -64,6 +64,7 @@ class Dataset(threading.Thread):
     self.data_dir = data_dir
     self.near = config.near
     self.far = config.far
+    self.factor = config.factor
     if split == 'train':
       self._train_init(config)
     elif split == 'test':
@@ -226,7 +227,11 @@ class Multicam(Dataset):
     for fbase in self.meta['file_path']:
       fname = os.path.join(self.data_dir, fbase)
       with utils.open_file(fname, 'rb') as imgin:
-        image = np.array(Image.open(imgin), dtype=np.float32) / 255.
+        img = Image.open(imgin)
+        w, h = img.size
+        if self.factor > 0:
+          img = img.resize((w//self.factor, h // self.factor))
+        image = np.array(img, dtype=np.float32) / 255.
       if config.white_bkgd:
         image = image[..., :3] * image[..., -1:] + (1. - image[..., -1:])
       images.append(image[..., :3])
@@ -260,6 +265,12 @@ class Multicam(Dataset):
     cam2world = self.meta['cam2world']
     width = self.meta['width']
     height = self.meta['height']
+    if self.factor > 0:
+      width = width // self.factor
+      height = height // self.factor
+      cam2pix = np.linalg.inv(pix2cam)
+      cam2pix[:, :2, :] /= self.factor
+      pix2cam = np.linalg.inv(cam2pix)
 
     def res2grid(w, h):
       return np.meshgrid(  # pylint: disable=unbalanced-tuple-unpacking
